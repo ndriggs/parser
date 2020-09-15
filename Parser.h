@@ -6,7 +6,8 @@ class Parser {
 private:
 
 public:
-	void check();
+	void check(string tokenName, string line);
+	string returnTokenType(string line);
 	
 	type ParseDatalog();
 	
