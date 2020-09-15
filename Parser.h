@@ -6,6 +6,8 @@ class Parser {
 private:
 
 public:
+	void check();
+	
 	type ParseDatalog();
 	
 	type ParseSchemeList();
