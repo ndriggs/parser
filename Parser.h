@@ -1,36 +1,37 @@
 #pragma once
+#include <string>
+#include <queue>
+
 
 using namespace std;
 
 class Parser {
 private:
-
-public:
 	void check(string tokenName, string line);
 	string returnTokenType(string line);
 	
-	type ParseDatalog();
+	void ParseSchemeList(queue<string> &input);
+	void ParseFactList(queue<string> &input);
+	void ParseRuleList(queue<string> &input);
+	void ParseQueryList(queue<string> &input);
 	
-	type ParseSchemeList();
-	type ParseFactList();
-	type ParseRuleList();
-	type ParseQueryList();
-	
-	type ParseScheme();
-	type ParseFact();
-	type ParseRule();
-	type ParseQuery();
+	void ParseScheme(queue<string> &input);
+	void ParseFact(queue<string> &input);
+	void ParseRule(queue<string> &input);
+	void ParseQuery(queue<string> &input);
 
-	type ParseHeadPredicate();
-	type ParsePredicate();
+	void ParseHeadPredicate(queue<string> &input);
+	void ParsePredicate(queue<string> &input);
 
-	type ParsePredicateList();
-	type ParseParameterList();
-	type ParseStringList()
-	type ParseIdList();
+	void ParsePredicateList(queue<string> &input);
+	void ParseParameterList(queue<string> &input);
+	void ParseStringList(queue<string> &input);
+	void ParseIdList(queue<string> &input);
 
-	type ParseParameter();
-	type ParseExpression();
-	type ParseOperator();
+	void ParseParameter(queue<string> &input);
+	void ParseExpression(queue<string> &input);
+	void ParseOperator(queue<string> &input);
 
+public:
+	void ParseDatalog(queue<string> &input);
 };

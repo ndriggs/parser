@@ -1,8 +1,7 @@
 #include "Parser.h"
 #include <string>
 #include <queue>
-
-Parser::Parser(){}
+#include <iostream>
 
 void Parser::check(string tokenName, string line){
 	size_t comma_pos;
@@ -19,7 +18,7 @@ string Parser::returnTokenType(string line){
 	return line.substr(1, comma_pos - 1);
 }
 
-void ParseDatalog(queue<string> input){
+void Parser::ParseDatalog(queue<string> &input){
 	try{
 		check("SCHEMES", input.front());
 		input.pop();
@@ -44,6 +43,7 @@ void ParseDatalog(queue<string> input){
 		ParseQuery(input);
 		ParseQueryList(input);
 		check("EOF", input.front());
+		cout << "Success!" << endl;
 	} catch(string line) {
 		cout << "Failure!" << endl << line << endl;
 	}
@@ -51,7 +51,7 @@ void ParseDatalog(queue<string> input){
 
 
 
-void ParseSchemeList(queue<string> &input){
+void Parser::ParseSchemeList(queue<string> &input){
 	string tokenType = returnTokenType(input.front());
 	if(tokenType != "ID")
 		return;
@@ -59,7 +59,7 @@ void ParseSchemeList(queue<string> &input){
 	ParseSchemeList(input);
 }
 
-void ParseFactList(queue<string> &input){
+void Parser::ParseFactList(queue<string> &input){
 	string tokenType = returnTokenType(input.front());
 	if(tokenType != "ID")
 	       return;
@@ -67,15 +67,15 @@ void ParseFactList(queue<string> &input){
 	ParseFactList(input);
 }
 
-void ParseRuleList(queue<string> &input){
+void Parser::ParseRuleList(queue<string> &input){
 	string tokenType = returnTokenType(input.front());
 	if(tokenType != "ID")
 		return;
 	ParseRule(input);
-	Parse(RuleList);
+	ParseRuleList(input);
 }
 
-void ParseQueryList(queue<string> &input){
+void Parser::ParseQueryList(queue<string> &input){
 	if(returnTokenType(input.front()) != "ID")
 		return;
 	ParseQuery(input);
@@ -95,7 +95,7 @@ void Parser::ParseScheme(queue<string> &input){
 	return;	
 }
 
-void ParseFact(queue<string> &input){
+void Parser::ParseFact(queue<string> &input){
 	check("FACT", input.front());
 	input.pop();
 	check("LEFT_PAREN", input.front());
@@ -110,7 +110,7 @@ void ParseFact(queue<string> &input){
 	return;
 }
 
-void ParseRule(queue<string> &input){
+void Parser::ParseRule(queue<string> &input){
 	ParseHeadPredicate(input);
 	check("COLON_DASH", input.front());
 	input.pop();
@@ -121,7 +121,7 @@ void ParseRule(queue<string> &input){
 	return;
 }
 
-void ParseQuery(queue<string> &input){
+void Parser::ParseQuery(queue<string> &input){
 	if(returnTokenType(input.front()) != "ID")
 		return;
 	ParsePredicate(input);
@@ -130,7 +130,7 @@ void ParseQuery(queue<string> &input){
 	return;
 }
 
-void ParseHeadPredicate(queue<string> &input){
+void Parser::ParseHeadPredicate(queue<string> &input){
 	check("ID", input.front());
 	input.pop();
 	check("LEFT_PAREN", input.front());
@@ -143,7 +143,7 @@ void ParseHeadPredicate(queue<string> &input){
 	return;
 }
 
-void ParsePredicate(queue<string> &input){
+void Parser::ParsePredicate(queue<string> &input){
 	check("ID", input.front());
 	input.pop();
 	check("LEFT_PAREN", input.front());
@@ -155,7 +155,7 @@ void ParsePredicate(queue<string> &input){
 	return;
 }
 
-void ParsePredicateList(queue<string> &input){
+void Parser::ParsePredicateList(queue<string> &input){
 	if(returnTokenType(input.front()) != "COMMA")
 		return;
 	input.pop();
@@ -164,7 +164,7 @@ void ParsePredicateList(queue<string> &input){
 	return;
 }
 
-void ParseParameterList(queue<string> &input){
+void Parser::ParseParameterList(queue<string> &input){
 	if(returnTokenType(input.front()) != "COMMA")
 		return;
 	input.pop();
@@ -173,7 +173,7 @@ void ParseParameterList(queue<string> &input){
 	return;
 }
 
-void ParseStringList(queue<string> &input){
+void Parser::ParseStringList(queue<string> &input){
 	if(returnTokenType(input.front()) != "COMMA")
 		return;
 	input.pop();
@@ -183,7 +183,7 @@ void ParseStringList(queue<string> &input){
 	return;
 }
 
-void ParseIdList(queue<string> &input){
+void Parser::ParseIdList(queue<string> &input){
 	string tokenType = returnTokenType(input.front());
 	if(tokenType != "COMMA")
 		return;
@@ -194,7 +194,7 @@ void ParseIdList(queue<string> &input){
 	return;
 }
 	
-void ParseParameter(queue<string> &input){
+void Parser::ParseParameter(queue<string> &input){
 	string tokenType = returnTokenType(input.front());
 	if((tokenType == "STRING") || (tokenType == "ID")){
 		input.pop();
@@ -205,7 +205,7 @@ void ParseParameter(queue<string> &input){
 	}
 }
 
-void ParseExpresion(queue<string> &input){
+void Parser::ParseExpression(queue<string> &input){
 	check("LEFT_PAREN", input.front());
 	input.pop();
 	ParseParameter(input);
@@ -216,11 +216,13 @@ void ParseExpresion(queue<string> &input){
 	return;
 }
 
-void ParseOperator(queue<string> &input){
+void Parser::ParseOperator(queue<string> &input){
 	string tokenType = returnTokenType(input.front());
-	if((tokenType == "ADD") || (tokenType == "MULTIPLY"))
+	if((tokenType == "ADD") || (tokenType == "MULTIPLY")){
 		input.pop();
 		return;
-	else
+	}
+	else{
 		throw(input.front());
+	}
 }

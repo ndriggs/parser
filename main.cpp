@@ -1,22 +1,20 @@
-#include "test.h"
+#include "Parser.h"
 #include <string>
 #include <queue>
 #include <iostream>
+#include <fstream>
 
 using namespace std;
 
 int main(){
 	queue<string> lines;
-	lines.push("zero");
-	lines.push("one");
-	lines.push("two");
-	lines.push("three");
-	cout << lines.front() << endl;
-	lines.pop();
-	cout << lines.front() << endl;	
-
-	string input = "(SCHEMES,\"Schemes\",4)";
-	Test t;
-	t.parser(lines);
+	ifstream input_file("tokens.txt");
+	string line;
+	while(!input_file.eof()){
+		getline(input_file, line);
+		lines.push(line);
+	}
+	Parser p;
+	p.ParseDatalog(lines);
 	return 0;
 }	
