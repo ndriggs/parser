@@ -1,15 +1,18 @@
 #pragma once
 #include <string>
 #include <queue>
-
+#include "DatalogProgram.h"
 
 using namespace std;
 
 class Parser {
 private:
+	DatalogProgram dp;
+	
 	void check(string tokenName, string line);
 	string returnTokenType(string line);
-	
+	string getTokenValue(string line);	
+
 	void ParseSchemeList(queue<string> &input);
 	void ParseFactList(queue<string> &input);
 	void ParseRuleList(queue<string> &input);

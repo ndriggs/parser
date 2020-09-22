@@ -1,4 +1,5 @@
 #include "Parser.h"
+#include "DatalogProgram.h"
 #include <string>
 #include <queue>
 #include <iostream>
@@ -16,6 +17,13 @@ string Parser::returnTokenType(string line){
 	size_t comma_pos;
 	comma_pos = line.find(",");
 	return line.substr(1, comma_pos - 1);
+}
+
+string Parser::getTokenValue(string line){
+	size_t first_quote, second_quote;
+	first_quote = line.find("\"");
+	second_quote = line.find("\"", first_quote + 1);
+	return line.substr(first_quote + 2, second_quote - first_quote - 3);
 }
 
 void Parser::ParseDatalog(queue<string> &input){
@@ -44,6 +52,7 @@ void Parser::ParseDatalog(queue<string> &input){
 		ParseQueryList(input);
 		check("EOF", input.front());
 		cout << "Success!" << endl;
+		cout << dp.toString() << endl;
 	} catch(string line) {
 		cout << "Failure!" << endl << line << endl;
 	}
@@ -89,18 +98,19 @@ void Parser::ParseScheme(queue<string> &input){
 	input.pop();
 	check("ID", input.front());
 	input.pop();
-	ParseSchemeList(input);
+	ParseIdList(input);
 	check("RIGHT_PAREN", input.front());
 	input.pop();
 	return;	
 }
 
 void Parser::ParseFact(queue<string> &input){
-	check("FACT", input.front());
+	check("ID", input.front());
 	input.pop();
 	check("LEFT_PAREN", input.front());
 	input.pop();
 	check("STRING", input.front());
+	dp.insertDomainString(getTokenValue(input.front())); 
 	input.pop();
 	ParseStringList(input);
 	check("RIGHT_PAREN", input.front());
