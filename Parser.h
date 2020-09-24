@@ -28,8 +28,8 @@ private:
 
 	void ParsePredicateList(queue<string> &input);
 	void ParseParameterList(queue<string> &input);
-	void ParseStringList(queue<string> &input);
-	void ParseIdList(queue<string> &input);
+	void ParseStringList(queue<string> &input, Predicate*& f);
+	void ParseIdList(queue<string> &input, vector<string> &ids);
 
 	void ParseParameter(queue<string> &input);
 	void ParseExpression(queue<string> &input);

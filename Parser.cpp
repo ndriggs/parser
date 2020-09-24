@@ -1,5 +1,7 @@
 #include "Parser.h"
 #include "DatalogProgram.h"
+#include "Predicate.h"
+#include "Parameter.h"
 #include <string>
 #include <queue>
 #include <iostream>
@@ -23,7 +25,7 @@ string Parser::getTokenValue(string line){
 	size_t first_quote, second_quote;
 	first_quote = line.find("\"");
 	second_quote = line.find("\"", first_quote + 1);
-	return line.substr(first_quote + 2, second_quote - first_quote - 3);
+	return line.substr(first_quote + 1, second_quote - first_quote - 1);
 }
 
 void Parser::ParseDatalog(queue<string> &input){
@@ -93,30 +95,44 @@ void Parser::ParseQueryList(queue<string> &input){
 
 void Parser::ParseScheme(queue<string> &input){
 	check("ID", input.front());
+	string id = getTokenValue(input.front());
+	Predicate* s = new Predicate(id);
     	input.pop();
 	check("LEFT_PAREN", input.front());
 	input.pop();
 	check("ID", input.front());
+	id = getTokenValue(input.front());
+	vector<string> ids;
+	ids.push_back(id);
 	input.pop();
-	ParseIdList(input);
+	ParseIdList(input, ids);
+	for(int i = 0; (unsigned)i < ids.size(); i++){
+		s->addParameter(new Parameter(ids[i]));
+	}
 	check("RIGHT_PAREN", input.front());
 	input.pop();
+	dp.addScheme(s);
 	return;	
 }
 
 void Parser::ParseFact(queue<string> &input){
 	check("ID", input.front());
+	string id = getTokenValue(input.front());
+	Predicate* f = new Predicate(id);
 	input.pop();
 	check("LEFT_PAREN", input.front());
 	input.pop();
 	check("STRING", input.front());
-	dp.insertDomainString(getTokenValue(input.front())); 
+	string str = getTokenValue(input.front());
+	dp.insertDomainString(str);
+        f->addParameter(new Parameter(str));	
 	input.pop();
-	ParseStringList(input);
+	ParseStringList(input, f);
 	check("RIGHT_PAREN", input.front());
 	input.pop();
 	check("PERIOD", input.front());
 	input.pop();
+	dp.addFact(f);
 	return;
 }
 
@@ -147,7 +163,9 @@ void Parser::ParseHeadPredicate(queue<string> &input){
 	input.pop();
 	check("ID", input.front());
 	input.pop();
-	ParseIdList(input);
+	Predicate* s = new Predicate("random string");
+	vector<string> ids;
+	ParseIdList(input, ids); ////need some changes here
 	check("RIGHT_PAREN", input.front());
 	input.pop();
 	return;
@@ -183,24 +201,29 @@ void Parser::ParseParameterList(queue<string> &input){
 	return;
 }
 
-void Parser::ParseStringList(queue<string> &input){
+void Parser::ParseStringList(queue<string> &input, Predicate*& f){
 	if(returnTokenType(input.front()) != "COMMA")
 		return;
 	input.pop();
 	check("STRING", input.front());
+	string str = getTokenValue(input.front());
+	dp.insertDomainString(str);
+	f->addParameter(new Parameter(str));
 	input.pop();
-	ParseStringList(input);
+	ParseStringList(input, f);
 	return;
 }
 
-void Parser::ParseIdList(queue<string> &input){
+void Parser::ParseIdList(queue<string> &input, vector<string> &ids){
 	string tokenType = returnTokenType(input.front());
 	if(tokenType != "COMMA")
 		return;
 	input.pop();
 	check("ID", input.front());
+	string id = getTokenValue(input.front());
+	ids.push_back(id);
 	input.pop();
-	ParseIdList(input);
+	ParseIdList(input, ids);
 	return;
 }
 	
