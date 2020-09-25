@@ -6,9 +6,9 @@
 
 using namespace std;
 
-int main(){
+int main(int argc, char** argv){
 	queue<string> lines;
-	ifstream input_file("tokens.txt");
+	ifstream input_file(argv[1]);
 	string line;
 	while(!input_file.eof()){
 		getline(input_file, line);
