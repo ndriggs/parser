@@ -160,12 +160,11 @@ void Parser::ParseRule(queue<string> &input){
 void Parser::ParseQuery(queue<string> &input){
 	if(returnTokenType(input.front()) != "ID")
 		return;
-	Predicate* q = new Predicate();
+	Predicate* q = new Predicate("fake id");
 	ParsePredicate(input, q);
 	check("Q_MARK", input.front());
  	input.pop();
-	q->toString(); /// Something about this q....
-	dp.addQuery(q); // you can't seem to be able to reference it... 
+	dp.addQuery(q);  
 	return;
 }
 
@@ -204,6 +203,9 @@ void Parser::ParsePredicate(queue<string> &input, Predicate*& p){
 	ParseParameterList(input, params);
 	check("RIGHT_PAREN", input.front());
 	input.pop();
+	for(int i = 0; (unsigned)i < params.size(); i++){
+		p->addParameter(params[i]);
+	}
 	return;
 }
 
