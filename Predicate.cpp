@@ -8,6 +8,10 @@ Predicate::Predicate(string id){
 	this->id = id;
 }
 
+void Predicate::addId(string id){
+	this->id = id;
+}
+
 void Predicate::addParameter(Parameter* p){
 	parameters.push_back(p);
 }

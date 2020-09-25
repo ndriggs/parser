@@ -23,17 +23,17 @@ private:
 	void ParseRule(queue<string> &input);
 	void ParseQuery(queue<string> &input);
 
-	void ParseHeadPredicate(queue<string> &input);
-	void ParsePredicate(queue<string> &input);
+	void ParseHeadPredicate(queue<string> &input, Predicate*& p);
+	void ParsePredicate(queue<string> &input, Predicate*& p);
 
-	void ParsePredicateList(queue<string> &input);
-	void ParseParameterList(queue<string> &input);
+	void ParsePredicateList(queue<string> &input, vector<Predicate*> &preds);
+	void ParseParameterList(queue<string> &input, vector<Parameter*> &params);
 	void ParseStringList(queue<string> &input, Predicate*& f);
 	void ParseIdList(queue<string> &input, vector<string> &ids);
 
-	void ParseParameter(queue<string> &input);
-	void ParseExpression(queue<string> &input);
-	void ParseOperator(queue<string> &input);
+	void ParseParameter(queue<string> &input, Parameter*& p);
+	void ParseExpression(queue<string> &input, Parameter*& p);
+	void ParseOperator(queue<string> &input, Parameter*& p);
 
 public:
 	void ParseDatalog(queue<string> &input);

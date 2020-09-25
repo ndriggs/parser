@@ -19,6 +19,9 @@ void DatalogProgram::addQuery(Predicate* query){
 	queries.push_back(query);
 }
 
+void DatalogProgram::addRule(Rule* rule){
+	rules.push_back(rule);
+}
 
 string DatalogProgram::toString(){
 	stringstream ss;

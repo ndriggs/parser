@@ -2,6 +2,7 @@
 #include "DatalogProgram.h"
 #include "Predicate.h"
 #include "Parameter.h"
+#include "Rule.h"
 #include <string>
 #include <queue>
 #include <iostream>
@@ -137,67 +138,94 @@ void Parser::ParseFact(queue<string> &input){
 }
 
 void Parser::ParseRule(queue<string> &input){
-	ParseHeadPredicate(input);
+	Predicate* hp = new Predicate();
+	ParseHeadPredicate(input, hp);
+	Rule* r = new Rule(hp);
 	check("COLON_DASH", input.front());
 	input.pop();
-	ParsePredicate(input);
-	ParsePredicateList(input);
+	Predicate* p = new Predicate();
+	ParsePredicate(input, p);
+	vector<Predicate*> preds;
+	preds.push_back(p);
+	ParsePredicateList(input, preds);
 	check("PERIOD", input.front());
 	input.pop();
+	for(int i = 0; (unsigned)i < preds.size(); i++){
+		r->addPredicate(preds[i]);
+	}
+	dp.addRule(r);
 	return;
 }
 
 void Parser::ParseQuery(queue<string> &input){
 	if(returnTokenType(input.front()) != "ID")
 		return;
-	ParsePredicate(input);
+	Predicate* q = new Predicate();
+	ParsePredicate(input, q);
 	check("Q_MARK", input.front());
  	input.pop();
+	q->toString(); /// Something about this q....
+	dp.addQuery(q); // you can't seem to be able to reference it... 
 	return;
 }
 
-void Parser::ParseHeadPredicate(queue<string> &input){
+void Parser::ParseHeadPredicate(queue<string> &input, Predicate*& p){
 	check("ID", input.front());
+	string id = getTokenValue(input.front());
+	p->addId(id);
 	input.pop();
 	check("LEFT_PAREN", input.front());
 	input.pop();
 	check("ID", input.front());
+	id = getTokenValue(input.front());
 	input.pop();
-	Predicate* s = new Predicate("random string");
 	vector<string> ids;
-	ParseIdList(input, ids); ////need some changes here
+	ids.push_back(id);
+	ParseIdList(input, ids); 
 	check("RIGHT_PAREN", input.front());
 	input.pop();
+	for(int i = 0; (unsigned)i < ids.size(); i++){
+		p->addParameter(new Parameter(ids[i]));
+	}
 	return;
 }
 
-void Parser::ParsePredicate(queue<string> &input){
+void Parser::ParsePredicate(queue<string> &input, Predicate*& p){
 	check("ID", input.front());
+	string id = getTokenValue(input.front());
+	p->addId(id);
 	input.pop();
 	check("LEFT_PAREN", input.front());
 	input.pop();
-	ParseParameter(input);
-	ParseParameterList(input);
+	Parameter* param = new Parameter();
+	ParseParameter(input, param);
+	vector<Parameter*> params;
+	params.push_back(param);
+	ParseParameterList(input, params);
 	check("RIGHT_PAREN", input.front());
 	input.pop();
 	return;
 }
 
-void Parser::ParsePredicateList(queue<string> &input){
+void Parser::ParsePredicateList(queue<string> &input, vector<Predicate*> &preds){
 	if(returnTokenType(input.front()) != "COMMA")
 		return;
 	input.pop();
-	ParsePredicate(input);
-	ParsePredicateList(input);
+	Predicate* pred = new Predicate();
+	ParsePredicate(input, pred);
+	preds.push_back(pred);
+	ParsePredicateList(input, preds);
 	return;
 }
 
-void Parser::ParseParameterList(queue<string> &input){
+void Parser::ParseParameterList(queue<string> &input, vector<Parameter*> &params){
 	if(returnTokenType(input.front()) != "COMMA")
 		return;
 	input.pop();
-	ParseParameter(input);
-	ParseParameterList(input);
+	Parameter* param = new Parameter();
+	ParseParameter(input, param);
+	params.push_back(param);
+	ParseParameterList(input, params);
 	return;
 }
 
@@ -227,31 +255,37 @@ void Parser::ParseIdList(queue<string> &input, vector<string> &ids){
 	return;
 }
 	
-void Parser::ParseParameter(queue<string> &input){
+void Parser::ParseParameter(queue<string> &input, Parameter*& p){
 	string tokenType = returnTokenType(input.front());
 	if((tokenType == "STRING") || (tokenType == "ID")){
+		string parm = getTokenValue(input.front());
+		p->addSome(parm);
 		input.pop();
 		return;
 	} else{
-		ParseExpression(input);
+		ParseExpression(input, p);
 		return;
 	}
 }
 
-void Parser::ParseExpression(queue<string> &input){
+void Parser::ParseExpression(queue<string> &input, Parameter*& p){
 	check("LEFT_PAREN", input.front());
+	p->addSome("(");
 	input.pop();
-	ParseParameter(input);
-	ParseOperator(input);
-	ParseParameter(input);
+	ParseParameter(input, p);
+	ParseOperator(input, p);
+	ParseParameter(input, p);
 	check("RIGHT_PAREN", input.front());
+	p->addSome(")");
 	input.pop();
 	return;
 }
 
-void Parser::ParseOperator(queue<string> &input){
+void Parser::ParseOperator(queue<string> &input, Parameter*& p){
 	string tokenType = returnTokenType(input.front());
 	if((tokenType == "ADD") || (tokenType == "MULTIPLY")){
+		string op = getTokenValue(input.front());
+		p->addSome(op);
 		input.pop();
 		return;
 	}
