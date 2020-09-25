@@ -53,5 +53,7 @@ string DatalogProgram::toString(){
 		ss << "  " << *it << endl;
 		it++;
 	}
-	return ss.str();
+	string parsed = ss.str();
+	parsed.pop_back();
+	return parsed;
 }

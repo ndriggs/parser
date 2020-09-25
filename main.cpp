@@ -1,4 +1,11 @@
 #include "Parser.h"
+#include "Token.h"
+#include "Comment.h"
+#include "NoEndComment.h"
+#include "EndOfFile.h"
+#include "String.h"
+#include "NotAString.h"
+#include "Lexer.h"
 #include <string>
 #include <queue>
 #include <iostream>
@@ -10,9 +17,21 @@ int main(int argc, char** argv){
 	queue<string> lines;
 	ifstream input_file(argv[1]);
 	string line;
-	while(!input_file.eof()){
-		getline(input_file, line);
-		lines.push(line);
+	string input;
+	while(getline(input_file, line)){
+		input += line;
+		input.push_back('\n');
+	}
+	input.push_back(EOF);
+	Lexer l;
+	l.Run(input);
+	ofstream outfile("newtokens.txt");
+	outfile << l.print();
+	ifstream tokens("newtokens.txt");
+	string tokenline;
+	while(!tokens.eof()){
+		getline(tokens, tokenline);
+		lines.push(tokenline);
 	}
 	Parser p;
 	p.ParseDatalog(lines);
