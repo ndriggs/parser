@@ -27,6 +27,7 @@ int main(int argc, char** argv){
 	l.Run(input);
 	ofstream outfile("newtokens.txt");
 	outfile << l.print();
+	outfile.close();
 	ifstream tokens("newtokens.txt");
 	string tokenline;
 	while(!tokens.eof()){

@@ -13,7 +13,7 @@ void Parser::check(string tokenName, string line){
 	if(line.substr(1, comma_pos - 1) == tokenName)
 		return;
 	else
-		throw(line);	
+		throw("  " + line);	
 }
 
 string Parser::returnTokenType(string line){

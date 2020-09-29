@@ -32,19 +32,15 @@ string DatalogProgram::toString(){
 	}
 	ss << "Facts(" << facts.size() << "):" << endl;
 	for(int i = 0; (unsigned)i < facts.size(); i++){
-		ss << "  " << facts[i]->toString() << endl;
+		ss << "  " << facts[i]->toString() << "." << endl;
 	}
 	ss << "Rules(" << rules.size() << "):" << endl;
 	for(int i = 0; (unsigned)i < rules.size(); i++){
-		ss << " " << rules[i]->toString() << endl;
+		ss << "  " << rules[i]->toString() << endl;
 	}
 	ss << "Queries(" << queries.size() << "):" << endl;
 	for(int i = 0; (unsigned)i < queries.size(); i++){
-		ss << "  " << queries[i]->toString();
-		if((unsigned)(i+1) < queries.size())
-			ss << endl;
-		else
-			ss << "?" << endl;
+		ss << "  " << queries[i]->toString() << "?" << endl;
 	}
 	
 	ss << "Domain(" << domain.size() << "):" << endl;
